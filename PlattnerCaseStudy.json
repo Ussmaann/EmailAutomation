@@ -1,0 +1,500 @@
+{
+  "name": "PlattnerCaseStudy",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        -448
+      ],
+      "id": "e4a0c5b5-fc49-45cb-a8fa-9915d5f665eb",
+      "name": "Read Emails",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "PHA7XVCYMgjo28Ej",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7210733c-e2eb-41d7-a62c-7ad778ca8050",
+              "name": "ThreadId",
+              "value": "={{ $json.threadId }}",
+              "type": "string"
+            },
+            {
+              "id": "175c82c7-9bc5-40ec-8e98-a0a188daa07d",
+              "name": "EmailBody",
+              "value": "={{ $json.snippet }}",
+              "type": "string"
+            },
+            {
+              "id": "d5ed13b8-7caa-4ad4-8e48-14fe79357907",
+              "name": "EmailSubject",
+              "value": "={{ $json.Subject }}",
+              "type": "string"
+            },
+            {
+              "id": "d4c2f0eb-0b5d-41de-b47d-d6b70cf28ab3",
+              "name": "EmailFrom",
+              "value": "={{ $json.From }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        -448
+      ],
+      "id": "4db38566-a0d8-4166-a248-53b2e2a1ea92",
+      "name": "Extract Useful Information"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        528,
+        -224
+      ],
+      "id": "69e51fdd-90a5-43cf-ab6e-3d930dad7abd",
+      "name": "Gpt-4.1mini",
+      "credentials": {
+        "openAiApi": {
+          "id": "5TXkeAsjzAIX3eJu",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = JSON.parse($json[\"text\"]);\nreturn data;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        -448
+      ],
+      "id": "9d7dcab5-3df9-48a7-bf14-1c2f17c1cc52",
+      "name": "ParsetoJson"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1328,
+        -80
+      ],
+      "id": "da2b89ae-40d4-4509-8c74-659192dd349e",
+      "name": "Gpt-4.1mini1",
+      "credentials": {
+        "openAiApi": {
+          "id": "5TXkeAsjzAIX3eJu",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a510305c-d590-420c-88f1-b3051d22f778",
+              "name": "timestamp",
+              "value": "={{ $now }}",
+              "type": "string"
+            },
+            {
+              "id": "e7ed2ab1-11d7-4b83-a4a4-946b08bbefbc",
+              "name": "from",
+              "value": "={{ $('Read Emails').item.json.From }}",
+              "type": "string"
+            },
+            {
+              "id": "ffb10f86-1296-484b-b0db-db53f91cf444",
+              "name": "subject",
+              "value": "={{ $('Extract Useful Information').item.json.EmailSubject }}",
+              "type": "string"
+            },
+            {
+              "id": "dffb34c5-2c97-49a4-8a98-7acdea90da4f",
+              "name": "category",
+              "value": "={{ $json[\"category\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "d4b63197-9559-4087-ac30-039025a0923f",
+              "name": "organization_name",
+              "value": "`{{ $json[\"organization_name\"]",
+              "type": "string"
+            },
+            {
+              "id": "76a064d8-df7f-4320-bcad-b18fb4f3f849",
+              "name": "contact_person",
+              "value": "`{{ $json[\"contact_person\"]",
+              "type": "string"
+            },
+            {
+              "id": "5aa21276-efd1-474d-b21c-d0acc2e68da1",
+              "name": "project_title",
+              "value": "`{{ $json[\"project_title\"]",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1312,
+        -592
+      ],
+      "id": "9c2610ca-530c-4568-bd4a-bc3d82114096",
+      "name": "ExtractLogs"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1600,
+        -592
+      ],
+      "id": "395312d1-de5a-48d0-8f8f-1aa578fe1f5e",
+      "name": "SaveLogs"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Read Emails').item.json.From }}",
+        "subject": "={{ JSON.parse($json[\"text\"]).reply_subject }}",
+        "message": "={{ JSON.parse($json[\"text\"]).reply_html }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1600,
+        -304
+      ],
+      "id": "ecac467a-0c04-4ae6-8376-827208eb2183",
+      "name": "Email Sent",
+      "webhookId": "8b9c2616-89d3-461d-81dc-1c7d8d529c97",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "PHA7XVCYMgjo28Ej",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.category }}",
+                    "rightValue": "New Application",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "7283d21b-f7fe-4f51-8a91-b03ec863e4cb"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "60577712-0b96-4060-8a7c-07c84da78162",
+                    "leftValue": "={{ $json.category }}",
+                    "rightValue": "Status Update",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "02511cb6-d66f-48e6-a38d-6a7af7710a1a",
+                    "leftValue": "={{ $json.category }}",
+                    "rightValue": "General Question",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "7978e343-10f8-49db-800f-c60dd7532147",
+                    "leftValue": "={{ $json.category }}",
+                    "rightValue": "Irrelevant",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        1024,
+        -480
+      ],
+      "id": "1a523ba6-dccc-478f-9738-cb0f7f693f83",
+      "name": "Conditional Response"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are the Plattner Foundation email assistant.\ncategory: {{$json.category}}  \ncontact_person: {{$json.contact_person || \"Applicant\"}}\nproject_title: {{$json.project_title || \"\"}}\norganization_name: {{$json.organization_name || \"\"}}\n\nWrite a concise, friendly HTML auto-reply for an email.\nInclude the portal link: https://www.plattnerfoundation.org/apply\nReturn JSON:\n{\n  \"reply_subject\": \"Thank you for your application – Plattner Foundation\",\n  \"reply_html\": \"<p>...</p>\"\n}\n",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1248,
+        -304
+      ],
+      "id": "fe3ed4cb-90db-4120-9a3b-eb0a736997f6",
+      "name": "Genertate Customize Email"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a Plattner Foundation email Automation assistant.\n\nYour job is to:\n- Classify incoming emails into one of these categories:\n  - New Application\n  - Status Update\n  - General Question\n  - Irrelevant\n- Extract, if available:\n  - Organization Name\n  - Contact Person\n  - Project Title\n\nAlways respond strictly as a valid JSON object like this:\n{\n  \"category\": \"\",\n  \"organization_name\": \"\",\n  \"contact_person\": \"\",\n  \"project_title\": \"\"\n}\n\nIf a field is missing, leave it as an empty string.\nReturn only JSON — no explanations or extra text.\n\nFollowing are the email which you need to look at\nEmail Subject: {{ $json.EmailSubject }}\nEmail Body: {{ $json.EmailBody }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        448,
+        -448
+      ],
+      "id": "b09f2c8e-8715-454a-afa1-cd2180001086",
+      "name": "Classify Email Type"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Read Emails": {
+      "main": [
+        [
+          {
+            "node": "Extract Useful Information",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Useful Information": {
+      "main": [
+        [
+          {
+            "node": "Classify Email Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gpt-4.1mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Classify Email Type",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ParsetoJson": {
+      "main": [
+        [
+          {
+            "node": "Conditional Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gpt-4.1mini1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Genertate Customize Email",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ExtractLogs": {
+      "main": [
+        [
+          {
+            "node": "SaveLogs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conditional Response": {
+      "main": [
+        [
+          {
+            "node": "Genertate Customize Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ExtractLogs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ExtractLogs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ExtractLogs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Genertate Customize Email": {
+      "main": [
+        [
+          {
+            "node": "Email Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify Email Type": {
+      "main": [
+        [
+          {
+            "node": "ParsetoJson",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9709b543-7360-4321-811a-2c8e6ff06d49",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4aea2a8df4c7a415a0d7c2b0aff4aa942f7f5709f822b9208c457f8ef800543e"
+  },
+  "id": "2S2ZXNwmTSEl8A6J",
+  "tags": []
+}
