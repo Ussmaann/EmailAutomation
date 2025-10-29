@@ -1,5 +1,5 @@
 # Case Study: Plattner Foundation Email Automation
-### Infrastructure Setup & Workflow Implementation
+
 
 ## Overview
 This project demonstrates the deployment of a **self-hosted instance of n8n** on **Microsoft Azure**, designed to automate email handling for the Plattner Foundation.  
