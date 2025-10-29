@@ -16,7 +16,7 @@
       "typeVersion": 1.3,
       "position": [
         0,
-        -448
+        -444
       ],
       "id": "e4a0c5b5-fc49-45cb-a8fa-9915d5f665eb",
       "name": "Read Emails",
@@ -40,19 +40,19 @@
             {
               "id": "175c82c7-9bc5-40ec-8e98-a0a188daa07d",
               "name": "EmailBody",
-              "value": "={{ $json.snippet }}",
+              "value": "={{ $json.text }}",
               "type": "string"
             },
             {
               "id": "d5ed13b8-7caa-4ad4-8e48-14fe79357907",
               "name": "EmailSubject",
-              "value": "={{ $json.Subject }}",
+              "value": "={{ $json.subject }}",
               "type": "string"
             },
             {
               "id": "d4c2f0eb-0b5d-41de-b47d-d6b70cf28ab3",
               "name": "EmailFrom",
-              "value": "={{ $json.From }}",
+              "value": "={{ $json.headers.from }}",
               "type": "string"
             }
           ]
@@ -62,8 +62,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        224,
-        -448
+        448,
+        -444
       ],
       "id": "4db38566-a0d8-4166-a248-53b2e2a1ea92",
       "name": "Extract Useful Information"
@@ -80,8 +80,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        528,
-        -224
+        744,
+        -220
       ],
       "id": "69e51fdd-90a5-43cf-ab6e-3d930dad7abd",
       "name": "Gpt-4.1mini",
@@ -99,8 +99,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        800,
-        -448
+        1024,
+        -444
       ],
       "id": "9d7dcab5-3df9-48a7-bf14-1c2f17c1cc52",
       "name": "ParsetoJson"
@@ -117,8 +117,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        1328,
-        -80
+        1544,
+        -72
       ],
       "id": "da2b89ae-40d4-4509-8c74-659192dd349e",
       "name": "Gpt-4.1mini1",
@@ -182,7 +182,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1312,
+        1536,
         -592
       ],
       "id": "9c2610ca-530c-4568-bd4a-bc3d82114096",
@@ -190,12 +190,13 @@
     },
     {
       "parameters": {
+        "binaryPropertyName": "={{ $('Conditional Response').item.json.contact_person }} {{ $('Conditional Response').item.json.project_title }}{{ $('Conditional Response').item.json.organization_name }},{{ $('Conditional Response').item.json.category }}",
         "options": {}
       },
       "type": "n8n-nodes-base.convertToFile",
       "typeVersion": 1.1,
       "position": [
-        1600,
+        1824,
         -592
       ],
       "id": "395312d1-de5a-48d0-8f8f-1aa578fe1f5e",
@@ -211,8 +212,8 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
       "position": [
-        1600,
-        -304
+        1824,
+        -296
       ],
       "id": "ecac467a-0c04-4ae6-8376-827208eb2183",
       "name": "Email Sent",
@@ -326,8 +327,8 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.3,
       "position": [
-        1024,
-        -480
+        1248,
+        -476
       ],
       "id": "1a523ba6-dccc-478f-9738-cb0f7f693f83",
       "name": "Conditional Response"
@@ -341,8 +342,8 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.7,
       "position": [
-        1248,
-        -304
+        1472,
+        -296
       ],
       "id": "fe3ed4cb-90db-4120-9a3b-eb0a736997f6",
       "name": "Genertate Customize Email"
@@ -356,11 +357,34 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.7,
       "position": [
-        448,
-        -448
+        672,
+        -444
       ],
       "id": "b09f2c8e-8715-454a-afa1-cd2180001086",
       "name": "Classify Email Type"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": "={{ $json.id }}",
+        "simple": false,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        224,
+        -444
+      ],
+      "id": "8642ed61-235c-422c-bd35-6b3ee0110aab",
+      "name": "Get a message",
+      "webhookId": "bbab0837-a623-4bd0-888a-d5b657ce68f4",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "PHA7XVCYMgjo28Ej",
+          "name": "Gmail account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -369,7 +393,7 @@
       "main": [
         [
           {
-            "node": "Extract Useful Information",
+            "node": "Get a message",
             "type": "main",
             "index": 0
           }
@@ -479,6 +503,17 @@
         [
           {
             "node": "ParsetoJson",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a message": {
+      "main": [
+        [
+          {
+            "node": "Extract Useful Information",
             "type": "main",
             "index": 0
           }
