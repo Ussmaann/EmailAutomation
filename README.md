@@ -1,4 +1,4 @@
-# Case Study: Plattner Foundation Email Automation
+# Use Case: Plattner Foundation Email Automation
 
 
 ## Overview
